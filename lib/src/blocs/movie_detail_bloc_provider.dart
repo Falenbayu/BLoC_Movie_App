@@ -1,34 +1,23 @@
-import 'dart:async';
+import 'package:flutter/material.dart';
+import 'movie_detail_bloc.dart';
+export 'movie_detail_bloc.dart';
 
-import 'package:rxdart/rxdart.dart';
-import '../models/trailer_model.dart';
-import '../resources/repository.dart';
+class MovieDetailBlocProvider extends InheritedWidget {
+  final MovieDetailBloc bloc;
 
-class MovieDetailBloc {
-  final _repository = Repository();
-  final _movieId = PublishSubject<int>();
-  final _trailers = BehaviorSubject<Future<TrailerModel>>();
+  MovieDetailBlocProvider({Key key, Widget child})
+      : bloc = MovieDetailBloc(),
+        super(key: key, child: child);
 
-  Function(int) get fetchTrailersById => _movieId.sink.add;
-  Observable<Future<TrailerModel>> get movieTrailers => _trailers.stream;
-
-  MovieDetailBloc() {
-    _movieId.stream.transform(_itemTransformer()).pipe(_trailers);
+  @override
+  bool updateShouldNotify(_) {
+    return true;
   }
 
-  dispose() async {
-    _movieId.close();
-    await _trailers.drain();
-    _trailers.close();
-  }
-
-  _itemTransformer() {
-    return ScanStreamTransformer(
-      (Future<TrailerModel> trailer, int id, int index) {
-        print(index);
-        trailer = _repository.fetchTrailers(id);
-        return trailer;
-      },
-    );
+  static MovieDetailBloc of(BuildContext context) {
+    return (context
+                .dependOnInheritedWidgetOfExactType<MovieDetailBlocProvider>()
+            as MovieDetailBlocProvider)
+        .bloc;
   }
 }
