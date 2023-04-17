@@ -9,8 +9,8 @@ class MovieApiProvider {
 
   Future<ItemModel> fetchMovieList() async {
     print("entered");
-    final response = await client
-        .get("http://api.themoviedb.org/3/movie/popular?api_key=$_apiKey");
+    final response = await client.get(
+        "https://api.themoviedb.org/3/movie/550?api_key=d38f3d18b578c04971c8405188c63d63");
     print(response.body.toString());
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
